@@ -24,10 +24,10 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     title = models.CharField(
-        max_length=100, verbose_name="Курс", help_text="Укажите курс"
+        max_length=100, verbose_name="Урок", help_text="Укажите урок"
     )
     description = models.TextField(
-        verbose_name="Описание", help_text="Опишите курс", **NULLABLE
+        verbose_name="Описание", help_text="Опишите урок", **NULLABLE
     )
     preview = models.TextField(
         verbose_name="Превью", help_text="Загрузите превью", **NULLABLE
