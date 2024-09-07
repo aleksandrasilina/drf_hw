@@ -13,20 +13,20 @@ class User(AbstractUser):
     phone_number = models.CharField(
         max_length=35,
         verbose_name="Телефон",
-        **NULLABLE,
         help_text="Укажите телефона",
+        **NULLABLE,
     )
     avatar = models.ImageField(
         upload_to="users/avatars/",
         verbose_name="Аватар",
-        **NULLABLE,
         help_text="Загрузите свой аватар",
+        **NULLABLE,
     )
     city = models.CharField(
         max_length=100,
         verbose_name="Город",
-        **NULLABLE,
         help_text="Укажите город",
+        **NULLABLE,
     )
 
     USERNAME_FIELD = "email"
