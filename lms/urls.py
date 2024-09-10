@@ -9,7 +9,7 @@ from lms.views import (CourseViewSet, LessonCreateAPIView,
 app_name = LmsConfig.name
 
 router = SimpleRouter()
-router.register("", CourseViewSet)
+router.register(r"courses", CourseViewSet)
 
 urlpatterns = [
     path("lessons/create/", LessonCreateAPIView.as_view(), name="lessons_create"),
