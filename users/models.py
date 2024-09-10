@@ -54,14 +54,35 @@ class User(AbstractUser):
 
 class Payment(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name="Пользователь", help_text="Укажите пользователя",
-        related_name="payments"
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        help_text="Укажите пользователя",
+        related_name="payments",
     )
     payment_date = models.DateField(auto_now_add=True, verbose_name="Дата оплаты")
-    paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Оплаченный курс",
-                                    help_text="Укажите оплаченный курс", related_name="payments", **NULLABLE)
-    paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name="Оплаченный урок",
-                                    help_text="Укажите оплаченный урок", related_name="payments", **NULLABLE)
-    amount = models.PositiveIntegerField(verbose_name="Сумма оплаты", help_text="Укажите сумму оплаты")
-    payment_method = models.CharField(max_length=50, verbose_name="Метод оплаты",
-                                     help_text="Укажите метод оплаты", choices=PAYMENT_CHOICES)
+    paid_course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        verbose_name="Оплаченный курс",
+        help_text="Укажите оплаченный курс",
+        related_name="payments",
+        **NULLABLE,
+    )
+    paid_lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        verbose_name="Оплаченный урок",
+        help_text="Укажите оплаченный урок",
+        related_name="payments",
+        **NULLABLE,
+    )
+    amount = models.PositiveIntegerField(
+        verbose_name="Сумма оплаты", help_text="Укажите сумму оплаты"
+    )
+    payment_method = models.CharField(
+        max_length=50,
+        verbose_name="Метод оплаты",
+        help_text="Укажите метод оплаты",
+        choices=PAYMENT_CHOICES,
+    )
