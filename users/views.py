@@ -16,6 +16,11 @@ class UserViewSet(ModelViewSet):
             return UserDetailSerializer
         return UserSerializer
 
+    def perform_create(self, serializer):
+        user = serializer.save(is_active=True)
+        user.set_password(user.password)
+        user.save()
+
 
 class PaymentListAPIView(ListAPIView):
     queryset = Payment.objects.all()
