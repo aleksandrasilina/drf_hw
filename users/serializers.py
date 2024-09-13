@@ -6,11 +6,13 @@ from users.models import Payment, User
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            "id",
-            "email",
-            "password",
-        )
+        fields = "__all__"
+        # fields = (
+        #     "id",
+        #     "email",
+        #     "phone_number",
+        #     "city"
+        # )
 
 
 class PaymentSerializer(ModelSerializer):
