@@ -17,6 +17,7 @@ isort = "^5.13.2"
 django-filter = "^24.3"
 flake8 = "^7.1.1"
 djangorestframework-simplejwt = "^5.3.1"
+ipython = "^8.27.0"
 
 
 [build-system]
