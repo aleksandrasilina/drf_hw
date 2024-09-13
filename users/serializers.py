@@ -6,13 +6,13 @@ from users.models import Payment, User
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = "__all__"
-        # fields = (
-        #     "id",
-        #     "email",
-        #     "phone_number",
-        #     "city"
-        # )
+        fields = (
+            "id",
+            "email",
+            "phone_number",
+            "city",
+            "password",
+        )
 
 
 class PaymentSerializer(ModelSerializer):
@@ -26,4 +26,4 @@ class UserDetailSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "email", "password", "payments")
+        fields = ("id", "email", "first_name", "last_name", "password", "payments")
