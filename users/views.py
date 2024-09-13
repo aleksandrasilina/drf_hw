@@ -1,10 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.generics import CreateAPIView, ListAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from users.models import Payment, User
+from users.permissions import IsProfileOwner
 from users.serializers import (PaymentSerializer, UserDetailSerializer,
                                UserSerializer)
 
@@ -13,7 +14,11 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
+        if (
+            self.action == "retrieve"
+            and self.request.user == User.objects.get(pk=self.kwargs.get("pk"))
+            or self.request.user.is_superuser
+        ):
             return UserDetailSerializer
         return UserSerializer
 
@@ -23,9 +28,11 @@ class UserViewSet(ModelViewSet):
         user.save()
 
     def get_permissions(self):
-        super().get_permissions()
         if self.action == "create":
             self.permission_classes = (AllowAny,)
+        elif self.action in ["update", "partial_update", "destroy"]:
+            self.permission_classes = (IsAuthenticated, IsProfileOwner | IsAdminUser)
+
         return super().get_permissions()
 
 
@@ -33,7 +40,6 @@ class PaymentListAPIView(ListAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    # , filters.OrderingFilter, filters.SearchFilter
     filterset_fields = ("paid_lesson", "paid_course", "payment_method")
     ordering_fields = ("payment_date",)
 
