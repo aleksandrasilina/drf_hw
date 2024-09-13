@@ -1,1 +1,82 @@
-[{"model": "lms.course", "pk": 2, "fields": {"title": "Python", "description": null, "preview": null}}, {"model": "lms.course", "pk": 3, "fields": {"title": "JavaScript", "description": null, "preview": null}}, {"model": "lms.lesson", "pk": 2, "fields": {"title": "Django", "description": null, "preview": null, "video_link": null, "course": 2}}, {"model": "lms.lesson", "pk": 3, "fields": {"title": "DRF", "description": null, "preview": null, "video_link": null, "course": 2}}, {"model": "lms.lesson", "pk": 4, "fields": {"title": "Lesson_1", "description": null, "preview": null, "video_link": null, "course": 3}}]
+[
+  {
+    "model": "lms.course",
+    "pk": 2,
+    "fields": {
+      "title": "Java",
+      "description": null,
+      "preview": null
+    }
+  },
+  {
+    "model": "lms.course",
+    "pk": 3,
+    "fields": {
+      "title": "JavaScript",
+      "description": null,
+      "preview": null
+    }
+  },
+  {
+    "model": "lms.course",
+    "pk": 4,
+    "fields": {
+      "title": "QA",
+      "description": null,
+      "preview": null
+    }
+  },
+  {
+    "model": "lms.course",
+    "pk": 5,
+    "fields": {
+      "title": "QA2",
+      "description": null,
+      "preview": null
+    }
+  },
+  {
+    "model": "lms.lesson",
+    "pk": 2,
+    "fields": {
+      "title": "Django",
+      "description": null,
+      "preview": null,
+      "video_link": null,
+      "course": 2
+    }
+  },
+  {
+    "model": "lms.lesson",
+    "pk": 3,
+    "fields": {
+      "title": "DRF",
+      "description": null,
+      "preview": null,
+      "video_link": null,
+      "course": 2
+    }
+  },
+  {
+    "model": "lms.lesson",
+    "pk": 4,
+    "fields": {
+      "title": "Lesson_1",
+      "description": null,
+      "preview": null,
+      "video_link": null,
+      "course": 3
+    }
+  },
+  {
+    "model": "lms.lesson",
+    "pk": 7,
+    "fields": {
+      "title": "Docker",
+      "description": null,
+      "preview": null,
+      "video_link": null,
+      "course": 2
+    }
+  }
+]
