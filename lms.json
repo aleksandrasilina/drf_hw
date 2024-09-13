@@ -3,9 +3,10 @@
     "model": "lms.course",
     "pk": 2,
     "fields": {
-      "title": "Java",
+      "title": "Python",
       "description": null,
-      "preview": null
+      "preview": null,
+      "owner": null
     }
   },
   {
@@ -14,25 +15,18 @@
     "fields": {
       "title": "JavaScript",
       "description": null,
-      "preview": null
+      "preview": null,
+      "owner": null
     }
   },
   {
     "model": "lms.course",
-    "pk": 4,
+    "pk": 14,
     "fields": {
       "title": "QA",
       "description": null,
-      "preview": null
-    }
-  },
-  {
-    "model": "lms.course",
-    "pk": 5,
-    "fields": {
-      "title": "QA2",
-      "description": null,
-      "preview": null
+      "preview": null,
+      "owner": null
     }
   },
   {
@@ -43,7 +37,8 @@
       "description": null,
       "preview": null,
       "video_link": null,
-      "course": 2
+      "course": 2,
+      "owner": null
     }
   },
   {
@@ -54,7 +49,8 @@
       "description": null,
       "preview": null,
       "video_link": null,
-      "course": 2
+      "course": 2,
+      "owner": null
     }
   },
   {
@@ -65,7 +61,8 @@
       "description": null,
       "preview": null,
       "video_link": null,
-      "course": 3
+      "course": 3,
+      "owner": null
     }
   },
   {
@@ -76,7 +73,20 @@
       "description": null,
       "preview": null,
       "video_link": null,
-      "course": 2
+      "course": 2,
+      "owner": null
+    }
+  },
+  {
+    "model": "lms.lesson",
+    "pk": 11,
+    "fields": {
+      "title": "lesson_3",
+      "description": null,
+      "preview": null,
+      "video_link": null,
+      "course": 2,
+      "owner": 12
     }
   }
 ]
