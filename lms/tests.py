@@ -1,5 +1,6 @@
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.serializers import ValidationError
 from rest_framework.test import APITestCase
 
 from lms.models import Course, Lesson
@@ -100,6 +101,18 @@ class LessonTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Lesson.objects.all().count(), 2)
+
+    def test_lesson_wrong_create(self):
+        url = reverse("lms:lessons-create")
+        data = {
+            "title": "Django",
+            "course": self.course.pk,
+            "video_link": "https://rutube.ru/377/"
+        }
+        response = self.client.post(url, data)
+
+        self.assertRaises(ValidationError)
+
 
     def test_lesson_update(self):
         url = (reverse("lms:lessons-update", args=(self.lesson.pk,)))
