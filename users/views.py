@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from lms.models import Course
-from users.models import Payment, User, Subscription
+from users.models import Payment, Subscription, User
 from users.permissions import IsProfileOwner
 from users.serializers import (PaymentSerializer, UserDetailSerializer,
                                UserSerializer)
@@ -63,9 +63,9 @@ class SubscriptionAPIView(APIView):
 
         if subs_item.exists():
             subs_item.delete()
-            message = 'Подписка удалена'
+            message = "Подписка удалена"
 
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'Подписка добавлена'
+            message = "Подписка добавлена"
         return Response({"message": message})
