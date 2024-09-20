@@ -17,16 +17,24 @@ class LessonSerializer(ModelSerializer):
 class CourseSerializer(ModelSerializer):
     lesson_count = serializers.IntegerField(source="lessons.all.count", read_only=True)
     lessons = SerializerMethodField()
-    subscription = SerializerMethodField()
+    subscription = SerializerMethodField(read_only=True)
 
     def get_lessons(self, course):
         return [lesson.title for lesson in Lesson.objects.filter(course=course)]
 
     def get_subscription(self, course):
-        user = self.context.get('request').user
+        user = self.context.get("request").user
         for subscription in Subscription.objects.filter(user=user, course=course):
             return subscription.is_active
 
     class Meta:
         model = Course
-        fields = ("id", "title", "description", "lesson_count", "lessons", "owner", "subscription")
+        fields = (
+            "id",
+            "title",
+            "description",
+            "lesson_count",
+            "lessons",
+            "owner",
+            "subscription",
+        )
