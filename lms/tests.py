@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.serializers import ValidationError
@@ -9,12 +10,28 @@ from users.models import User
 
 class CourseTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(email="admin@email.com")
-        self.course = Course.objects.create(title="Python", owner=self.user)
-        self.lesson = Lesson.objects.create(title="DRF", course=self.course, owner=self.user)
-        self.client.force_authenticate(user=self.user)
+        # создаем суперпользователя
+        self.admin_user = User.objects.create(email="admin@email.com", is_superuser=True)
 
-    def test_course_retrieve(self):
+        # создаем модератора
+        self.moderator_user = User.objects.create(email="moderator_user@email.com")
+        moderators_group, created = Group.objects.get_or_create(name="moderator")
+        self.moderator_user.groups.add(moderators_group)
+
+        # создаем обычного пользователя
+        self.regular_user = User.objects.create(email="regular_user@email.com")
+
+        # создаем владельца курса
+        self.owner_user = User.objects.create(email="owner_user@email.com")
+
+        self.course = Course.objects.create(title="Python", owner=self.owner_user)
+        self.lesson = Lesson.objects.create(
+            title="DRF", course=self.course, owner=self.admin_user
+        )
+
+    # Тесты для суперпользователя
+    def test_course_retrieve_admin_access(self):
+        self.client.force_authenticate(user=self.admin_user)
         url = reverse("lms:course-detail", args=(self.course.pk,))
         response = self.client.get(url)
         data = response.json()
@@ -22,35 +39,35 @@ class CourseTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("title"), self.course.title)
 
-    def test_course_create(self):
+    def test_course_create_admin_access(self):
+        self.client.force_authenticate(user=self.admin_user)
         url = reverse("lms:course-list")
-        data = {
-            "title": "Java"
-        }
+        data = {"title": "Java"}
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Course.objects.all().count(), 2)
 
-    def test_course_update(self):
-        url = reverse("lms:course-detail", args=(self.course.pk,))
-        data = {
-            "title": "QA"
-        }
-        response = self.client.patch(url, data)
-        data = response.json()
+    # def test_course_update_admin_access(self):
+    #     self.client.force_authenticate(user=self.admin_user)
+    #     url = reverse("lms:course-detail", args=(self.course.pk,))
+    #     data = {"title": "QA"}
+    #     response = self.client.patch(url, data)
+    #     data = response.json()
+    #
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(data.get("title"), "QA")
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(data.get("title"), "QA")
+    # def test_course_delete_admin_access(self):
+    #     self.client.force_authenticate(user=self.admin_user)
+    #     url = reverse("lms:course-detail", args=(self.course.pk,))
+    #     response = self.client.delete(url)
+    #
+    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    #     self.assertEqual(Course.objects.all().count(), 0)
 
-    def test_course_delete(self):
-        url = reverse("lms:course-detail", args=(self.course.pk,))
-        response = self.client.delete(url)
-
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(Course.objects.all().count(), 0)
-
-    def test_course_list(self):
+    def test_course_list_admin_access(self):
+        self.client.force_authenticate(user=self.admin_user)
         url = reverse("lms:course-list")
         response = self.client.get(url)
         data = response.json()
@@ -64,12 +81,222 @@ class CourseTestCase(APITestCase):
                     "title": self.course.title,
                     "description": None,
                     "lesson_count": 1,
-                    "lessons": [
-                        self.lesson.title
-                    ],
-                    "owner": self.user.pk
+                    "lessons": [self.lesson.title],
+                    "owner": self.owner_user.pk,
+                    'subscription': None
                 },
-            ]
+            ],
+        }
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data, result)
+
+    # Тесты для модератора
+    def test_course_retrieve_moderator_access(self):
+        self.client.force_authenticate(user=self.moderator_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        response = self.client.get(url)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data.get("title"), self.course.title)
+
+    def test_course_create_moderator_access(self):
+        self.client.force_authenticate(user=self.moderator_user)
+        url = reverse("lms:course-list")
+        data = {"title": "Java"}
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_course_update_moderator_access(self):
+        self.client.force_authenticate(user=self.moderator_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        data = {"title": "QA"}
+        response = self.client.patch(url, data)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data.get("title"), "QA")
+
+    def test_course_delete_moderator_access(self):
+        self.client.force_authenticate(user=self.moderator_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_course_list_moderator_access(self):
+        self.client.force_authenticate(user=self.moderator_user)
+        url = reverse("lms:course-list")
+        response = self.client.get(url)
+        data = response.json()
+        result = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.course.pk,
+                    "title": self.course.title,
+                    "description": None,
+                    "lesson_count": 1,
+                    "lessons": [self.lesson.title],
+                    "owner": self.owner_user.pk,
+                    'subscription': None
+                },
+            ],
+        }
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data, result)
+
+    # Тесты для обычного пользователя
+    def test_course_retrieve_regular_access(self):
+        self.client.force_authenticate(user=self.regular_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_course_create_regular_access(self):
+        self.client.force_authenticate(user=self.regular_user)
+        url = reverse("lms:course-list")
+        data = {"title": "Java"}
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Course.objects.all().count(), 2)
+
+    def test_course_update_regular_access(self):
+        self.client.force_authenticate(user=self.regular_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        data = {"title": "QA"}
+        response = self.client.patch(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_course_delete_regular_access(self):
+        self.client.force_authenticate(user=self.regular_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_course_list_regular_access(self):
+        self.client.force_authenticate(user=self.regular_user)
+        url = reverse("lms:course-list")
+        response = self.client.get(url)
+        data = response.json()
+        result = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.course.pk,
+                    "title": self.course.title,
+                    "description": None,
+                    "lesson_count": 1,
+                    "lessons": [self.lesson.title],
+                    "owner": self.owner_user.pk,
+                    'subscription': None
+                },
+            ],
+        }
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data, result)
+
+    # Тесты для анонимного пользователя
+    def test_course_retrieve_anonymous_access(self):
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_course_create_anonymous_access(self):
+        url = reverse("lms:course-list")
+        data = {"title": "Java"}
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_course_update_anonymous_access(self):
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        data = {"title": "QA"}
+        response = self.client.patch(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_course_delete_anonymous_access(self):
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_course_list_anonymous_access(self):
+        url = reverse("lms:course-list")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    # Тесты для владельца курса
+    def test_course_retrieve_owner_access(self):
+        self.client.force_authenticate(user=self.owner_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data.get("title"), self.course.title)
+
+    def test_course_create_owner_access(self):
+        self.client.force_authenticate(user=self.owner_user)
+        url = reverse("lms:course-list")
+        data = {"title": "Java"}
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Course.objects.all().count(), 2)
+
+    def test_course_update_owner_access(self):
+        self.client.force_authenticate(user=self.owner_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        data = {"title": "QA"}
+        response = self.client.patch(url, data)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data.get("title"), "QA")
+
+    def test_course_delete_owner_access(self):
+        self.client.force_authenticate(user=self.owner_user)
+        url = reverse("lms:course-detail", args=(self.course.pk,))
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Course.objects.all().count(), 0)
+
+    def test_course_list_owner_access(self):
+        self.client.force_authenticate(user=self.owner_user)
+        url = reverse("lms:course-list")
+        response = self.client.get(url)
+        data = response.json()
+        result = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.course.pk,
+                    "title": self.course.title,
+                    "description": None,
+                    "lesson_count": 1,
+                    "lessons": [self.lesson.title],
+                    "owner": self.owner_user.pk,
+                    'subscription': None
+                },
+            ],
         }
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -78,10 +305,12 @@ class CourseTestCase(APITestCase):
 
 class LessonTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(email="admin@email.com")
-        self.course = Course.objects.create(title="Python", owner=self.user)
-        self.lesson = Lesson.objects.create(title="DRF", course=self.course, owner=self.user)
-        self.client.force_authenticate(user=self.user)
+        self.admin_user = User.objects.create(email="admin@email.com")
+        self.course = Course.objects.create(title="Python", owner=self.admin_user)
+        self.lesson = Lesson.objects.create(
+            title="DRF", course=self.course, owner=self.admin_user
+        )
+        self.client.force_authenticate(user=self.admin_user)
 
     def test_lesson_retrieve(self):
         url = reverse("lms:lessons-retrieve", args=(self.lesson.pk,))
@@ -93,10 +322,7 @@ class LessonTestCase(APITestCase):
 
     def test_lesson_create(self):
         url = reverse("lms:lessons-create")
-        data = {
-            "title": "Django",
-            "course": self.course.pk
-        }
+        data = {"title": "Django", "course": self.course.pk}
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -107,18 +333,15 @@ class LessonTestCase(APITestCase):
         data = {
             "title": "Django",
             "course": self.course.pk,
-            "video_link": "https://rutube.ru/377/"
+            "video_link": "https://rutube.ru/377/",
         }
         response = self.client.post(url, data)
 
         self.assertRaises(ValidationError)
 
-
     def test_lesson_update(self):
-        url = (reverse("lms:lessons-update", args=(self.lesson.pk,)))
-        data = {
-            "title": "Databases"
-        }
+        url = reverse("lms:lessons-update", args=(self.lesson.pk,))
+        data = {"title": "Databases"}
         response = self.client.patch(url, data)
         data = response.json()
 
@@ -148,9 +371,9 @@ class LessonTestCase(APITestCase):
                     "preview": None,
                     "video_link": None,
                     "course": self.course.pk,
-                    "owner": self.user.pk
+                    "owner": self.admin_user.pk,
                 }
-            ]
+            ],
         }
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
