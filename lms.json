@@ -88,5 +88,41 @@
       "course": 2,
       "owner": 12
     }
+  },
+  {
+    "model": "lms.lesson",
+    "pk": 22,
+    "fields": {
+      "title": "lesson_5",
+      "description": null,
+      "preview": null,
+      "video_link": "https://www.youtube.com/watch?v=STnI-W4IGZA&",
+      "course": 3,
+      "owner": 11
+    }
+  },
+  {
+    "model": "lms.lesson",
+    "pk": 23,
+    "fields": {
+      "title": "lesson_5",
+      "description": null,
+      "preview": null,
+      "video_link": "https://www.youtube.com/watch?v=STnI-W4IGZA&",
+      "course": 3,
+      "owner": 11
+    }
+  },
+  {
+    "model": "lms.lesson",
+    "pk": 24,
+    "fields": {
+      "title": "lesson_5",
+      "description": null,
+      "preview": null,
+      "video_link": "https://www.youtube.com/watch?v=STnI-W4IGZA&",
+      "course": 3,
+      "owner": 11
+    }
   }
 ]
