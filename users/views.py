@@ -11,7 +11,7 @@ from lms.models import Course
 from users.models import Payment, User, Subscription
 from users.permissions import IsProfileOwner
 from users.serializers import (PaymentSerializer, UserDetailSerializer,
-                               UserSerializer, SubscriptionSerializer)
+                               UserSerializer)
 
 
 class UserViewSet(ModelViewSet):
@@ -54,7 +54,6 @@ class PaymentCreateAPIView(CreateAPIView):
 
 class SubscriptionAPIView(APIView):
     queryset = Subscription.objects.all()
-    serializer_class = SubscriptionSerializer
 
     def post(self, *args, **kwargs):
         user = self.request.user
