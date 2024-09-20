@@ -50,8 +50,8 @@ class CourseTestCase(APITestCase):
 
         result = [
             {
-                "id": 4,
-                "email": "admin@email.com",
+                "id": self.user.pk,
+                "email": self.user.email,
                 "phone_number": None,
                 "city": None,
                 "password": "",
