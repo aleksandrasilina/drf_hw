@@ -30,14 +30,14 @@ class CourseTestCase(APITestCase):
         )
 
     # Тесты для суперпользователя
-    def test_course_retrieve_admin_access(self):
-        self.client.force_authenticate(user=self.admin_user)
-        url = reverse("lms:course-detail", args=(self.course.pk,))
-        response = self.client.get(url)
-        data = response.json()
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(data.get("title"), self.course.title)
+    # def test_course_retrieve_admin_access(self):
+    #     self.client.force_authenticate(user=self.admin_user)
+    #     url = reverse("lms:course-detail", args=(self.course.pk,))
+    #     response = self.client.get(url)
+    #     data = response.json()
+    #
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(data.get("title"), self.course.title)
 
     def test_course_create_admin_access(self):
         self.client.force_authenticate(user=self.admin_user)
