@@ -6,7 +6,7 @@ from lms.models import Course
 from users.models import Payment, Subscription, User
 
 
-class CourseTestCase(APITestCase):
+class UserTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(email="admin@email.com")
         self.client.force_authenticate(user=self.user)
@@ -81,7 +81,7 @@ class CourseTestCase(APITestCase):
         self.assertEqual(data, result)
 
 
-class LessonTestCase(APITestCase):
+class PaymentTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(email="admin@email.com")
         self.course = Course.objects.create(title="Python", owner=self.user)
@@ -127,9 +127,10 @@ class SubscriptionTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(email="admin@email.com")
         self.course = Course.objects.create(title="Python", owner=self.user)
-        self.client.force_authenticate(user=self.user)
 
-    def test_subscribtion_create(self):
+    # тесты для авторизованного пользователя
+    def test_subscription_create(self):
+        self.client.force_authenticate(user=self.user)
         url = reverse("users:subscription")
         data = {
             "course_id": self.course.pk,
@@ -139,7 +140,8 @@ class SubscriptionTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Subscription.objects.all().count(), 1)
 
-    def test_subscribtion_delete(self):
+    def test_subscription_delete(self):
+        self.client.force_authenticate(user=self.user)
         url = reverse("users:subscription")
         data = {
             "course_id": self.course.pk,
@@ -149,3 +151,23 @@ class SubscriptionTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Subscription.objects.all().count(), 0)
+
+    # тесты для неавторизованного пользователя
+    def test_subscription_create_anonymous_access(self):
+        url = reverse("users:subscription")
+        data = {
+            "course_id": self.course.pk,
+        }
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_subscription_delete_anonymous_access(self):
+        url = reverse("users:subscription")
+        data = {
+            "course_id": self.course.pk,
+        }
+        Subscription.objects.create(course=self.course, user=self.user)
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
