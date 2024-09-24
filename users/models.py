@@ -59,6 +59,7 @@ class Payment(models.Model):
         verbose_name="Пользователь",
         help_text="Укажите пользователя",
         related_name="payments",
+        **NULLABLE,
     )
     payment_date = models.DateField(auto_now_add=True, verbose_name="Дата оплаты")
     paid_course = models.ForeignKey(
@@ -85,6 +86,25 @@ class Payment(models.Model):
         verbose_name="Метод оплаты",
         help_text="Укажите метод оплаты",
         choices=PAYMENT_CHOICES,
+        **NULLABLE,
+    )
+    session_id = models.CharField(
+        max_length=255,
+        verbose_name="Id сессии",
+        help_text="Укажите id сессии",
+        **NULLABLE,
+    )
+    link = models.URLField(
+        max_length=400,
+        verbose_name="Ссылка на оплату",
+        help_text="Укажите ссылку на оплату",
+        **NULLABLE,
+    )
+    payment_status = models.CharField(
+        max_length=50,
+        verbose_name="Статус платежа",
+        help_text="Укажите статус платежа",
+        **NULLABLE,
     )
 
     def __str__(self):
