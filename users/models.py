@@ -86,3 +86,36 @@ class Payment(models.Model):
         help_text="Укажите метод оплаты",
         choices=PAYMENT_CHOICES,
     )
+
+    def __str__(self):
+        return f"Платеж {self.amount} за {self.paid_course if self.paid_course else self.paid_lesson} - {self.payment_date}"
+
+    class Meta:
+        verbose_name = "Платеж"
+        verbose_name_plural = "Платежи"
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        help_text="Укажите пользователя",
+        related_name="subscriptions",
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        verbose_name="Курс",
+        help_text="Укажите курс",
+        related_name="subscriptions",
+        **NULLABLE,
+    )
+    is_active = models.BooleanField(verbose_name="Активна ли подписка", default=True)
+
+    def __str__(self):
+        return f"Подписка {self.user} на курс {self.course}"
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"

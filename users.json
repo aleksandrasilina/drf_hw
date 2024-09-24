@@ -46,7 +46,7 @@
     "pk": 11,
     "fields": {
       "password": "pbkdf2_sha256$870000$TyY3t8y7YxQJTXzM5381fO$15rX5JBwuHSTqDeNXEy8Xv402uDog+fFXiFC+LuQCTY=",
-      "last_login": "2024-09-13T05:53:06.816Z",
+      "last_login": "2024-09-20T12:35:12.473Z",
       "is_superuser": true,
       "first_name": "Petr",
       "last_name": "",
@@ -122,6 +122,26 @@
     }
   },
   {
+    "model": "users.user",
+    "pk": 18,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$bVmPCDsIUy43AWe8E9vLuV$eKt0mer3NPe5+OkHAkHXETQbNd6AWxv3DpIhRtC6h5c=",
+      "last_login": null,
+      "is_superuser": false,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-13T17:55:03.922Z",
+      "email": "user_7@email.com",
+      "phone_number": null,
+      "avatar": "",
+      "city": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
     "model": "users.payment",
     "pk": 5,
     "fields": {
@@ -167,6 +187,24 @@
       "paid_lesson": null,
       "amount": 22000,
       "payment_method": "BANK_TRANSFER"
+    }
+  },
+  {
+    "model": "users.subscription",
+    "pk": 1,
+    "fields": {
+      "user": 11,
+      "course": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "users.subscription",
+    "pk": 3,
+    "fields": {
+      "user": 11,
+      "course": 2,
+      "is_active": true
     }
   }
 ]
