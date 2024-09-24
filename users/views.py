@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -65,6 +65,10 @@ class PaymentCreateAPIView(CreateAPIView):
         payment.link = payment_link
         payment.payment_method = "BANK_TRANSFER"
         payment.save()
+
+
+class PaymentDestroyAPIView(DestroyAPIView):
+    queryset = Payment.objects.all()
 
 
 class PaymentRetrieveAPIView(RetrieveAPIView):
