@@ -23,7 +23,7 @@
     "model": "users.user",
     "pk": 7,
     "fields": {
-      "password": "pbkdf2_sha256$870000$uGXoAbiHw7fWelNzgI3rCX$IdG5CaybjuoyeVasrYOOdSKmSVRBcR/5KkKIS+N1Ye8=",
+      "password": "pbkdf2_sha256$600000$vjcCeKFWge7x0tNFu6Ym0f$5gTZKK0s3lSsUSfIj2weDYlFy1Hqkz5EHJng6ZGSs6U=",
       "last_login": null,
       "is_superuser": false,
       "first_name": "Lev",
@@ -150,7 +150,10 @@
       "paid_course": null,
       "paid_lesson": 2,
       "amount": 5000,
-      "payment_method": "CASH"
+      "payment_method": "CASH",
+      "session_id": null,
+      "link": null,
+      "payment_status": null
     }
   },
   {
@@ -162,7 +165,10 @@
       "paid_course": null,
       "paid_lesson": 3,
       "amount": 6000,
-      "payment_method": "BANK_TRANSFER"
+      "payment_method": "BANK_TRANSFER",
+      "session_id": null,
+      "link": null,
+      "payment_status": null
     }
   },
   {
@@ -174,7 +180,10 @@
       "paid_course": 2,
       "paid_lesson": null,
       "amount": 20000,
-      "payment_method": "BANK_TRANSFER"
+      "payment_method": "BANK_TRANSFER",
+      "session_id": null,
+      "link": null,
+      "payment_status": null
     }
   },
   {
@@ -186,7 +195,70 @@
       "paid_course": 3,
       "paid_lesson": null,
       "amount": 22000,
-      "payment_method": "BANK_TRANSFER"
+      "payment_method": "BANK_TRANSFER",
+      "session_id": null,
+      "link": null,
+      "payment_status": null
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 17,
+    "fields": {
+      "user": 7,
+      "payment_date": "2024-09-24",
+      "paid_course": 3,
+      "paid_lesson": null,
+      "amount": 10000,
+      "payment_method": "BANK_TRANSFER",
+      "session_id": "cs_test_a1cDE2CJISM8WIAvyUtnqCstnmgC2hvByH2yaCTZb3Q3U4cs5k3eLxJ4Sn",
+      "link": null,
+      "payment_status": "unpaid"
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 18,
+    "fields": {
+      "user": 7,
+      "payment_date": "2024-09-24",
+      "paid_course": 3,
+      "paid_lesson": null,
+      "amount": 10000,
+      "payment_method": "BANK_TRANSFER",
+      "session_id": "cs_test_a1E6ufWaiiJtkwtY44v8cwHnPLXNuUf3TloiZ55EAeKY0YBNOI265jQFzn",
+      "link": "https://checkout.stripe.com/c/pay/cs_test_a1E6ufWaiiJtkwtY44v8cwHnPLXNuUf3TloiZ55EAeKY0YBNOI265jQFzn#fidkdWxOYHwnPyd1blpxYHZxWjA0VDdTTjNXamhLZGc8bGtCM2J2UG9DQGxha0lNSHA9TEMyMX1wZ0wxdUBXT3NkPFxvMzdKT3FNbUI9M1F2dUkyQDxuYU5WQnR%2FVDRtS1Z2SGEwV2dNd05uNTU2dGs1M09LPCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "payment_status": "paid"
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 29,
+    "fields": {
+      "user": 7,
+      "payment_date": "2024-09-24",
+      "paid_course": 2,
+      "paid_lesson": null,
+      "amount": 20000,
+      "payment_method": "BANK_TRANSFER",
+      "session_id": "cs_test_a1MXi3fh3UJKb3uk7ZRPLVSQgn4ZtZLeGZ4HyTe8PTaR6dxpPgbjG4OLsn",
+      "link": "https://checkout.stripe.com/c/pay/cs_test_a1MXi3fh3UJKb3uk7ZRPLVSQgn4ZtZLeGZ4HyTe8PTaR6dxpPgbjG4OLsn#fidkdWxOYHwnPyd1blpxYHZxWjA0VDdTTjNXamhLZGc8bGtCM2J2UG9DQGxha0lNSHA9TEMyMX1wZ0wxdUBXT3NkPFxvMzdKT3FNbUI9M1F2dUkyQDxuYU5WQnR%2FVDRtS1Z2SGEwV2dNd05uNTU2dGs1M09LPCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "payment_status": "unpaid"
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 30,
+    "fields": {
+      "user": 7,
+      "payment_date": "2024-09-24",
+      "paid_course": 2,
+      "paid_lesson": null,
+      "amount": 20000,
+      "payment_method": "BANK_TRANSFER",
+      "session_id": "cs_test_a1Ib8imE3qYYOThbEIlDW1nkO5OEjbA8psxq6oAxCj0VjvcLw8VZ3D9HeP",
+      "link": "https://checkout.stripe.com/c/pay/cs_test_a1Ib8imE3qYYOThbEIlDW1nkO5OEjbA8psxq6oAxCj0VjvcLw8VZ3D9HeP#fidkdWxOYHwnPyd1blpxYHZxWjA0VDdTTjNXamhLZGc8bGtCM2J2UG9DQGxha0lNSHA9TEMyMX1wZ0wxdUBXT3NkPFxvMzdKT3FNbUI9M1F2dUkyQDxuYU5WQnR%2FVDRtS1Z2SGEwV2dNd05uNTU2dGs1M09LPCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "payment_status": "paid"
     }
   },
   {
