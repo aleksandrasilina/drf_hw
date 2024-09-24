@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,8 +10,10 @@ from rest_framework.viewsets import ModelViewSet
 from lms.models import Course
 from users.models import Payment, Subscription, User
 from users.permissions import IsProfileOwner
-from users.serializers import (PaymentSerializer, UserDetailSerializer,
-                               UserSerializer)
+from users.serializers import (PaymentRetrieveSerializer, PaymentSerializer,
+                               UserDetailSerializer, UserSerializer)
+from users.services import (create_stripe_price, create_stripe_product,
+                            create_stripe_session)
 
 
 class UserViewSet(ModelViewSet):
@@ -50,6 +52,24 @@ class PaymentListAPIView(ListAPIView):
 
 class PaymentCreateAPIView(CreateAPIView):
     serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+        product = create_stripe_product(
+            payment.paid_course if payment.paid_course else payment.paid_lesson
+        )
+        price = create_stripe_price(product, payment.amount)
+        session_id, payment_link = create_stripe_session(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.payment_method = "BANK_TRANSFER"
+        payment.save()
+
+
+class PaymentRetrieveAPIView(RetrieveAPIView):
+    serializer_class = PaymentRetrieveSerializer
+    queryset = Payment.objects.all()
 
 
 class SubscriptionAPIView(APIView):
