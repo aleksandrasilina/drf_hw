@@ -83,7 +83,7 @@ class CourseTestCase(APITestCase):
                     "lesson_count": 1,
                     "lessons": [self.lesson.title],
                     "owner": self.owner_user.pk,
-                    'subscription': None
+                    "subscription": None,
                 },
             ],
         }
@@ -142,7 +142,7 @@ class CourseTestCase(APITestCase):
                     "lesson_count": 1,
                     "lessons": [self.lesson.title],
                     "owner": self.owner_user.pk,
-                    'subscription': None
+                    "subscription": None,
                 },
             ],
         }
@@ -199,7 +199,7 @@ class CourseTestCase(APITestCase):
                     "lesson_count": 1,
                     "lessons": [self.lesson.title],
                     "owner": self.owner_user.pk,
-                    'subscription': None
+                    "subscription": None,
                 },
             ],
         }
@@ -294,7 +294,7 @@ class CourseTestCase(APITestCase):
                     "lesson_count": 1,
                     "lessons": [self.lesson.title],
                     "owner": self.owner_user.pk,
-                    'subscription': None
+                    "subscription": None,
                 },
             ],
         }
@@ -351,7 +351,7 @@ class LessonTestCase(APITestCase):
             "course": self.course.pk,
             "video_link": "https://rutube.ru/377/",
         }
-        response = self.client.post(url, data)
+        self.client.post(url, data)
 
         self.assertRaises(ValidationError)
 
@@ -424,7 +424,7 @@ class LessonTestCase(APITestCase):
             "course": self.course.pk,
             "video_link": "https://rutube.ru/377/",
         }
-        response = self.client.post(url, data)
+        self.client.post(url, data)
 
         self.assertRaises(ValidationError)
 
@@ -475,7 +475,6 @@ class LessonTestCase(APITestCase):
         self.client.force_authenticate(user=self.regular_user)
         url = reverse("lms:lessons-retrieve", args=(self.lesson.pk,))
         response = self.client.get(url)
-        data = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -496,7 +495,7 @@ class LessonTestCase(APITestCase):
             "course": self.course.pk,
             "video_link": "https://rutube.ru/377/",
         }
-        response = self.client.post(url, data)
+        self.client.post(url, data)
 
         self.assertRaises(ValidationError)
 
@@ -545,9 +544,9 @@ class LessonTestCase(APITestCase):
     def test_lesson_retrieve_anonymous_access(self):
         url = reverse("lms:lessons-retrieve", args=(self.lesson.pk,))
         response = self.client.get(url)
-        data = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_lesson_create_anonymous_access(self):
         url = reverse("lms:lessons-create")
         data = {"title": "Django", "course": self.course.pk}
@@ -562,7 +561,7 @@ class LessonTestCase(APITestCase):
             "course": self.course.pk,
             "video_link": "https://rutube.ru/377/",
         }
-        response = self.client.post(url, data)
+        self.client.post(url, data)
 
         self.assertRaises(ValidationError)
 
@@ -583,23 +582,6 @@ class LessonTestCase(APITestCase):
     def test_lesson_list_anonymous_access(self):
         url = reverse("lms:lessons-list")
         response = self.client.get(url)
-        data = response.json()
-        result = {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                {
-                    "id": self.lesson.pk,
-                    "title": self.lesson.title,
-                    "description": None,
-                    "preview": None,
-                    "video_link": None,
-                    "course": self.course.pk,
-                    "owner": self.owner_user.pk,
-                }
-            ],
-        }
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -630,7 +612,7 @@ class LessonTestCase(APITestCase):
             "course": self.course.pk,
             "video_link": "https://rutube.ru/377/",
         }
-        response = self.client.post(url, data)
+        self.client.post(url, data)
 
         self.assertRaises(ValidationError)
 
