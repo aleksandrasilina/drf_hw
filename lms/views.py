@@ -38,20 +38,16 @@ class CourseViewSet(ModelViewSet):
 
     # def update(self, request, pk=None):
     def update(self, request, *args, **kwargs):
-        # super().update(request, *args, **kwargs)
-        partial = kwargs.pop("partial", False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
+        """Отправляет письмо подписчикам при обновлении курса."""
 
-        subscriptions = Subscription.objects.filter(course=instance)
+        course = self.get_object()
+        subscriptions = Subscription.objects.filter(course=course)
         if subscriptions:
             subscribers_email_list = [
                 subscription.user.email for subscription in subscriptions
             ]
-            send_update_info.delay(subscribers_email_list, instance.title)
-        return Response(serializer.data)
+            send_update_info.delay(subscribers_email_list, course.title)
+        return super().update(request, *args, **kwargs)
 
 
 class LessonCreateAPIView(CreateAPIView):
