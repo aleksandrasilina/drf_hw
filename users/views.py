@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
+from users.tasks import send_subscription_info
 from lms.models import Course
 from users.models import Payment, Subscription, User
 from users.permissions import IsProfileOwner
@@ -91,5 +92,6 @@ class SubscriptionAPIView(APIView):
 
         else:
             Subscription.objects.create(user=user, course=course_item)
+            send_subscription_info.delay(user.email, course_item.title)
             message = "Подписка добавлена"
         return Response({"message": message})
