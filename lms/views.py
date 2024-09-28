@@ -2,11 +2,14 @@ from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from lms.models import Course, Lesson
 from lms.paginators import CustomPagination
 from lms.serializers import CourseSerializer, LessonSerializer
+from lms.tasks import send_update_info
+from users.models import Subscription
 from users.permissions import IsModerator, IsOwner
 
 
@@ -32,6 +35,23 @@ class CourseViewSet(ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    # def update(self, request, pk=None):
+    def update(self, request, *args, **kwargs):
+        # super().update(request, *args, **kwargs)
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        subscriptions = Subscription.objects.filter(course=instance)
+        if subscriptions:
+            subscribers_email_list = [
+                subscription.user.email for subscription in subscriptions
+            ]
+            send_update_info.delay(subscribers_email_list, instance.title)
+        return Response(serializer.data)
 
 
 class LessonCreateAPIView(CreateAPIView):
