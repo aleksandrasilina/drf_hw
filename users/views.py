@@ -1,13 +1,13 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView)
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from users.tasks import send_subscription_info
 from lms.models import Course
 from users.models import Payment, Subscription, User
 from users.permissions import IsProfileOwner
@@ -92,6 +92,5 @@ class SubscriptionAPIView(APIView):
 
         else:
             Subscription.objects.create(user=user, course=course_item)
-            send_subscription_info.delay(user.email, course_item.title)
             message = "Подписка добавлена"
         return Response({"message": message})
