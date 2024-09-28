@@ -13,5 +13,5 @@ def send_update_info(email_list, course):
             subject="Обновление курса",
             message=f"Дорогой {user}, сообщаем вам, что курс {course} обновился",
             from_email=settings.EMAIL_HOST_USER,
-            recipient_list=email_list,
+            recipient_list=[user],
         )
