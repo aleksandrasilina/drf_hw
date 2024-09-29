@@ -10,13 +10,6 @@ from users.models import User
 def check_last_login():
     """Проверяет пользователей по дате последнего входа и блокирует их, если не заходили более месяца."""
 
-    users = User.objects.all()
-    for user in users:
-        if user.last_login:
-            if user.last_login < timezone.now() - timedelta(days=30):
-                user.is_active = False
-                user.save()
-        else:
-            if user.date_joined < timezone.now() - timedelta(days=30):
-                user.is_active = False
-                user.save()
+    User.objects.filter(
+        last_login__lt=timezone.now() - timedelta(days=30), is_active=True
+    ).update(is_active=False)
