@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
@@ -45,7 +48,8 @@ class CourseViewSet(ModelViewSet):
             subscribers_email_list = [
                 subscription.user.email for subscription in subscriptions
             ]
-            send_update_info.delay(subscribers_email_list, course.title)
+            if timezone.now() - course.updated_at > timedelta(hours=4):
+                send_update_info.delay(subscribers_email_list, course.title)
         return super().update(request, *args, **kwargs)
 
 
